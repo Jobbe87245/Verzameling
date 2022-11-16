@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model kristallen {
+  id          String  @id @default(cuid())
+  naam        String
+  prijs       Float
+  kleur       String
+  gewicht     String
+  transperant Boolean
+  zodiac      zodiac  @relation(fields: [zodiacId], references: [id])
+  herkomst    String
+  inhoud      Float
+
+  items    item[] //koppeling met items (bijde kanten)
+  zodiacId Int
+}
+
+model zodiac {
+  id     Int    @id @default(autoincrement())
+  symbol String
+  name   String
+  gloss  String
+
+  kristallen kristallen[]
+}
+
+model gebruikers {
+  id           String       @id @default(uuid())
+  naam         String       @unique
+  password     String
+  role         String       @default("USER")
+  bestellingen bestelling[] //koppeling met bestelling (bijde kanten)
+}
+
+model item {
+  id      String     @id @default(cuid())
+  kristal kristallen @relation(fields: [kristallenId], references: [id]) //zegt: crystal heeft een relatie met de tabel kristallen. En crystalID staat gelijk aan id uit kristallen
+  count   Int        @default(1)
+
+  kristallenId          String
+  bestelling            bestelling? @relation(fields: [bestellingOrdernummer], references: [ordernummer])
+  bestellingOrdernummer Int? //hoeft niet ingevult te worden, want het wordt al ingevult bij de relatie hierboven (bestellingOrdernummer)
+}
+
+model bestelling {
+  ordernummer Int    @id @default(autoincrement())
+  products    item[] //koppeling met item bestelling
+
+  gebruikers   gebruikers? @relation(fields: [gebruikersId], references: [id])
+  gebruikersId String?
+}
