@@ -18,7 +18,7 @@ export const getServerSideProps = async () => {
     }
 }
 
-const Home: NextPage = ({ kristallen }) => {
+const Home: NextPage = ({ kristallen }: any) => {
     return (
         <div>
             <Head>
